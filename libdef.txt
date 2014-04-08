@@ -1,0 +1,15 @@
+' src
+./src/Calc.cls
+
+' spec
+./spec/Calc_spec.cls
+
+' Excel-TDD
+./excel-tdd/InlineRunner.bas
+./excel-tdd/SpecSuite.cls
+./excel-tdd/SpecDefinition.cls
+./excel-tdd/SpecExpectation.cls
+' ./vendor/Excel-TDD/src/InlineRunner.bas
+' ./vendor/Excel-TDD/src/SpecSuite.cls
+' ./vendor/Excel-TDD/src/SpecDefinition.cls
+' ./vendor/Excel-TDD/src/SpecExpectation.cls
