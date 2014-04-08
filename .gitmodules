@@ -1,0 +1,6 @@
+[submodule "vendor/Excel-TDD"]
+	path = vendor/Excel-TDD
+	url = git@github.com:timhall/Excel-TDD.git
+[submodule "vendor/test-scripting-vba"]
+	path = vendor/test-scripting-vba
+	url = git@github.com:tcsh/text-scripting-vba.git
