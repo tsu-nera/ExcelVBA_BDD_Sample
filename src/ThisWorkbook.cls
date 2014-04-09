@@ -390,6 +390,7 @@ End Function
 '-------------------------------------------------------------
 Public Sub ExportAll()
     Dim export_path As String
+    Dim full_path As String
     Dim vb_component As Object
     
     export_path = EXPORT_FOLDER
@@ -415,7 +416,10 @@ Public Sub ExportAll()
              extention = ".cls"
         End Select
         
-        vb_component.Export ThisWorkbook.Path & "\\" & export_path & "\\" & vb_component.Name & extention
+        ' エクスポート
+        full_path = ThisWorkbook.Path & "\\" & export_path & "\\" & vb_component.Name & extention
+        Debug.Print "Export to " & full_path
+        vb_component.Export full_path
     Next
 End Sub
 
@@ -424,8 +428,7 @@ End Sub
 ' Func: テスト実行
 '-------------------------------------------------------------------------------
 Public Sub RunAllTests()
-  Dim Calc_spec
-  Set Calc_spec = New Calc_spec
-  Calc_spec.Specs
-  Set Calc_spec = Nothing
+  Dim Runner As New TestRunner
+  Runner.Run
+  Set Runner = Nothing
 End Sub

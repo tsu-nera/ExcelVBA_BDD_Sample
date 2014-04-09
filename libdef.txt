@@ -1,4 +1,6 @@
 ' src
+./src/TestRunner.cls
+
 ./src/Calc.cls
 ./src/Calc_spec.cls
 
