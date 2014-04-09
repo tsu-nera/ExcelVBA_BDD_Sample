@@ -4,3 +4,9 @@
 [submodule "vendor/test-scripting-vba"]
 	path = vendor/test-scripting-vba
 	url = git@github.com:tcsh/text-scripting-vba.git
+[submodule "vendor/emacs-vbasense"]
+	path = vendor/emacs-vbasense
+	url = git@github.com:aki2o/emacs-vbasense.git
+[submodule "vendor/visual-basic-mode"]
+	path = vendor/visual-basic-mode
+	url = git@github.com:emacsmirror/visual-basic-mode.git
