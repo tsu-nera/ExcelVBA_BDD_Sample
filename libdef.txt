@@ -1,8 +1,6 @@
 ' src
 ./src/Calc.cls
-
-' spec
-./spec/Calc_spec.cls
+./src/Calc_spec.cls
 
 ' Excel-TDD
 ./excel-tdd/InlineRunner.bas

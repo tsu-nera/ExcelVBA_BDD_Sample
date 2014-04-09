@@ -11,5 +11,5 @@ Attribute VB_Exposed = False
 ' Name     : Calc
 '-------------------------------------------------------------------
 Function Add(A As Double, B As Double) As Double
-	Add = A + B
+        Add = A + B
 End Function

@@ -7,51 +7,36 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
+Option Explicit
+
+'ライブラリリストの設定 (設置フォルダはワークブックと同じディレクトリ)
+Const FILENAME_LIBLIST As String = "libdef.txt" 'ライブラリリストのファイル名
+Const FILENAME_EXPORT As String = "ThisWorkbook-sjis.cls" 'エクスポート clsファイル名
+Const EXPORT_FOLDER As String = "export"
+
+'標準モジュール
+Const vbext_ct_StdModule As Integer = 1
+'クラス モジュール
+Const vbext_ct_ClassModule As Integer = 2
+'Microsoft Forms
+Const vbext_ct_MSForm As Integer = 3
+'ActiveX デザイナー
+Const vbext_ct_ActiveXDesigner As Integer = 11
+'ドキュメント モジュール
+Const vbext_ct_Document As Integer = 100
+
+'-------------------------------------------------------------------------------
+' Name: reloadModule
+' Func: 指定したファイルをreload FILENAME_LIBLIST で指定
+' Reference from
+'-------------------------------------------------------------------------------
 ' Text Scripting on VBA v1.0.0
 ' last update: 2013-01-03
 ' HATANO Hirokazu
 '
 ' Detail: http://rsh.csh.sh/text-scripting-vba/
 '  See Also: http://d.hatena.ne.jp/language_and_engineering/20090731/p1
-
-Option Explicit
-
-
-'----------------------------- Consts ---------------
-
-'ライブラリリストの設定 (設置フォルダはワークブックと同じディレクトリ)
-Const FILENAME_LIBLIST As String = "libdef.txt" 'ライブラリリストのファイル名
-Const FILENAME_EXPORT As String = "ThisWorkbook-sjis.cls" 'エクスポート clsファイル名
-
-'ワークブック オープン時に実行する(True) / しない(False)
-'Const ENABLE_WORKBOOK_OPEN As Boolean = True
-Const ENABLE_WORKBOOK_OPEN As Boolean = False
-
-'ショートカットキー
- Const SHORTKEY_RELOAD As String = "r" 'ctrl + r
-
-
-'----------------------------- Workbook_open() ---------------
-
-'ワークブック オープン時に実行
-Private Sub Workbook_Open()
-  If ENABLE_WORKBOOK_OPEN = False Then
-    Exit Sub
-  End If
-  
-  Call setShortKey
-  Call reloadModule
- End Sub
-
-'ワークブック クローズ時に実行
-Private Sub Workbook_BeforeClose(Cancel As Boolean)
-  Call clearShortKey
- End Sub
-
-
-
-'----------------------------- public Subs/Functions ---------------
-
+'-------------------------------------------------------------------------------
 Public Sub reloadModule()
 Attribute reloadModule.VB_ProcData.VB_Invoke_Func = " \n14"
   '手動リロード用 Public関数
@@ -64,14 +49,10 @@ Attribute reloadModule.VB_ProcData.VB_Invoke_Func = " \n14"
   End If
 End Sub
 
-
 Public Sub exportThisWorkbook()
   'ThisWorkbook 手動export用 Public関数
   Call exportModule("ThisWorkbook", FILENAME_EXPORT)
 End Sub
-
-
-
 
 '----------------------------- main Subs/Functions ---------------
 
@@ -152,7 +133,8 @@ Private Sub exportModule(ByVal nameModule As String, ByVal nameFile As String)
     
     If component.Name = nameModule Then
       component.Export ThisWorkbook.Path & Application.PathSeparator & nameFile
-      MsgBox nameModule & " を " & ThisWorkbook.Path & Application.PathSeparator & nameFile & " として保存しました。"
+      MsgBox nameModule & " を " & ThisWorkbook.Path & _
+                  Application.PathSeparator & nameFile & " として保存しました。"
     End If
     
   Next component
@@ -285,10 +267,13 @@ Private Function absPath(ByVal pathFile As String) As String
   End Select
 
 
-  'Case3. [A-z][0-9]で始まる場合 (Mac版Officeで正規表現が使えれば select文に入れるべき...)
+  'Case3. [A-z][0-9]で始まる場合
+  ' (Mac版Officeで正規表現が使えれば select文に入れるべき...)
 
-  ' Case3-1.ドライブレター対応("c:" & chr(92) が "c" & chr(92) & chr(92)になってしまうので書き戻す)
-  If nameOS Like "Windows *" And Left(pathFile, 2) Like "[A-z]" & Application.PathSeparator Then
+  ' Case3-1.ドライブレター対応("c:" & chr(92) が "c" &
+  ' chr(92) & chr(92)になってしまうので書き戻す)
+  If nameOS Like "Windows *" And Left(pathFile, 2) Like "[A-z]" & _
+                                                    Application.PathSeparator Then
     'MsgBox "Case3-1" & pathFile
     absPath = Replace(pathFile, Application.PathSeparator, ":", 1, 1)
     Exit Function
@@ -323,8 +308,6 @@ Err_dir:
   checkExistFile = False
 
 End Function
-
-
 
 'リストファイルを配列で返す(行頭が'(コメント)の行 & 空行は無視する)
 Private Function list2array(ByVal pathFile As String) As Variant
@@ -399,38 +382,47 @@ Private Function list2array(ByVal pathFile As String) As Variant
   list2array = arrayOutput
 End Function
 
+'-------------------------------------------------------------
+' Name: ExportAll
+' Func: すべてExport
+' Reference from
+' http://d.hatena.ne.jp/jamzz/20131002/1380696685
+'-------------------------------------------------------------
+Public Sub ExportAll()
+    Dim export_path As String
+    Dim vb_component As Object
+    
+    export_path = EXPORT_FOLDER
+    
+    For Each vb_component In ThisWorkbook.VBProject.VBComponents
 
-
-' ショートカットの設定 (Macでは Macro指定できないっぽい)
-Private Sub setShortKey()
-  If Application.OperatingSystem Like "Windows *" Then
-    Application.MacroOptions Macro:="ThisWorkbook.reloadModule", ShortcutKey:=SHORTKEY_RELOAD
-  
-  Else
-    ' Mac OS Xの場合の注意: ThisWorkbook.reloadModule関数を持つマクロファイルを複数開いていると、
-    ' 最後に開いたマクロファイルの ThisWorkbook.reloadModule関数が呼び出される模様。
-    ' (その場合、マクロ一覧から'該当マクロファイル!reloadModule' を呼び出してください。)
-    Application.OnKey "^" & SHORTKEY_RELOAD, "ThisWorkbook.reloadModule"
-
-  End If
-  
+        Dim extention As String
+        Select Case vb_component.Type
+            Case vbext_ct_StdModule
+            '標準モジュール
+            extention = ".bas"
+            Case vbext_ct_ClassModule
+            'クラス モジュール
+            extention = ".cls"
+            Case vbext_ct_MSForm
+            'Microsoft Forms
+            extention = ".frm"
+            Case vbext_ct_ActiveXDesigner
+            'ActiveX デザイナー
+            extention = ".cls"
+            Case vbext_ct_Document
+            'ドキュメント モジュール
+             extention = ".cls"
+        End Select
+        
+        vb_component.Export ThisWorkbook.Path & "\\" & export_path & "\\" & vb_component.Name & extention
+    Next
 End Sub
 
-
-'ショートカット設定の削除 (Macでは Macro指定できないっぽい)
-Private Sub clearShortKey()
-  If Application.OperatingSystem Like "Windows *" Then
-    Application.MacroOptions Macro:="ThisWorkbook.reloadModule", ShortcutKey:=""
-  
-  Else
-    ' Mac OS Xの場合の注意: ThisWorkbook.reloadModule関数を持つマクロファイルを複数開いていると、
-    ' 最後に開いたマクロファイルの ThisWorkbook.reloadModule関数がクリアされる可能性が高いと思われる(未検証)。
-    Application.OnKey SHORTKEY_RELOAD, ""
-  End If
-  
-End Sub
-
-'RunAllTests
+'-------------------------------------------------------------------------------
+' Name: RunAllTests
+' Func: テスト実行
+'-------------------------------------------------------------------------------
 Public Sub RunAllTests()
   Dim Calc_spec
   Set Calc_spec = New Calc_spec
