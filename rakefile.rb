@@ -24,12 +24,12 @@ end
 desc "import All Modules"
 task :import => :save do
   # importの前にセーブをしないとメモリ不足でimportが失敗した
-  @book.run("ThisWorkBook.reloadModule")
+  @book.run("importAllModule")
 end
 
 desc "export all files to specified dir"
  task :export => :open do
-  @book.run("ThisWorkBook.ExportAllModule")
+  @book.run("exportAllModule")
 end
 
 # http://officetanaka.net/excel/vba/vbe/index.htm

@@ -1,5 +1,6 @@
 ' src
 ./src/Calc.cls
+./src/Module1.bas
 
 ' spec
 ./src/TestRunner.bas

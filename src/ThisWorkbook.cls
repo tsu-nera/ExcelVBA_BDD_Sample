@@ -13,15 +13,6 @@ Option Explicit
 Const FILENAME_LIBLIST As String = "libdef.txt" 'ライブラリリストのファイル名
 Const EXPORT_FOLDER As String = "src"
 
-' モジュール定義
-Enum Module
-    Standard = 1   '標準モジュール
-    Class = 2      'クラス モジュール
-    Forms = 3      'Microsoft Forms
-    ActiveX = 11   'ActiveX デザイナー
-    Document = 100 'ドキュメント モジュール
-End Enum
-
 '-------------------------------------------------------------------------------
 ' Name: reloadModule
 ' Func: 指定したファイルをreload FILENAME_LIBLIST で指定
@@ -341,39 +332,14 @@ Private Function list2array(ByVal pathFile As String) As Variant
   list2array = arrayOutput
 End Function
 
-'-------------------------------------------------------------
-' Name: ExportAllModule
-' Func: すべてExport
-' Reference from
-' http://d.hatena.ne.jp/jamzz/20131002/1380696685
-'-------------------------------------------------------------
-Public Sub ExportAllModule()
-    Dim export_path As String
-    Dim full_path As String
-    Dim vb_component As Object
-    
-    export_path = EXPORT_FOLDER
-    
-    For Each vb_component In ThisWorkbook.VBProject.VBComponents
 
-        Dim extention As String
-        Select Case vb_component.Type
-            Case Module.Standard
-              extention = ".bas"
-            Case Module.Class
-              extention = ".cls"
-            Case Module.Forms
-              extention = ".frm"
-            Case Module.ActiveX
-              extention = ".cls"
-            Case Module.Document
-             extention = ".cls"
-        End Select
-        
-        ' エクスポート
-        full_path = ThisWorkbook.Path & "\\" & export_path & "\\" & vb_component.Name & extention
-        Debug.Print "Export to " & full_path
-        vb_component.Export full_path
-    Next
-End Sub
+
+
+
+
+
+
+
+
+
 
