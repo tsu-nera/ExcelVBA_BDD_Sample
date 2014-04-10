@@ -5,6 +5,7 @@ require 'pp'
 
 EXCEL_FILE  = "sample.xlsm"
 DEBUG_SHOW = false
+EXPORT_DIR_PATH = "./src"
 
 task :default => "open"
 
@@ -19,9 +20,11 @@ task :import => :open do
 end
 
 desc "export all files to specified dir"
-task :export => :open do
-  @book.run("ThisWorkBook.ExportAll")
+ task :export => :open do
+  @book.run("ThisWorkBook.ExportAllModule")
 end
+# task :export  do
+# export()
 
 # http://officetanaka.net/excel/vba/vbe/index.htm
 desc "Open Visual Basic Editor for Application"
@@ -84,14 +87,13 @@ end
 #   excel_file = getAbsolutePath(EXCEL_FILE)
 #   book = excel.Workbooks.Open(excel_file)
   
-#   book.VBProject.VBComponents.each do |vb_component|
+#   book.VBE.VBProject.VBComponents.each do |vb_component|
 
 #     full_path = getExportPath(vb_component)
 
 #     # export
 #     p "export to " + full_path
-#     # it doesn't work
-#     # vb_component.Export full_path
+#     vb_component.Export full_path
 #   end
 # end
 

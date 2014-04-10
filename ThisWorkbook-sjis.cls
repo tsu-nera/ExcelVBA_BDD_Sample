@@ -38,7 +38,6 @@ Const vbext_ct_Document As Integer = 100
 '  See Also: http://d.hatena.ne.jp/language_and_engineering/20090731/p1
 '-------------------------------------------------------------------------------
 Public Sub reloadModule()
-Attribute reloadModule.VB_ProcData.VB_Invoke_Func = " \n14"
   'è“®ƒŠƒ[ƒh—p PublicŠÖ”
   
   Dim msgError As String

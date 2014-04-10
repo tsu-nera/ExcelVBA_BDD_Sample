@@ -11,7 +11,6 @@ Option Explicit
 
 'ライブラリリストの設定 (設置フォルダはワークブックと同じディレクトリ)
 Const FILENAME_LIBLIST As String = "libdef.txt" 'ライブラリリストのファイル名
-Const FILENAME_EXPORT As String = "ThisWorkbook-sjis.cls" 'エクスポート clsファイル名
 Const EXPORT_FOLDER As String = "src"
 
 '標準モジュール
@@ -47,11 +46,6 @@ Attribute reloadModule.VB_ProcData.VB_Invoke_Func = " \n14"
   If Len(msgError) > 0 Then
     MsgBox msgError
   End If
-End Sub
-
-Public Sub exportThisWorkbook()
-  'ThisWorkbook 手動export用 Public関数
-  Call exportModule("ThisWorkbook", FILENAME_EXPORT)
 End Sub
 
 '----------------------------- main Subs/Functions ---------------
@@ -121,28 +115,6 @@ Private Function loadModule(ByVal pathConf As String) As String
   loadModule = msgError
 
 End Function
-
-
-
-'----------------------------- Functions / Subs ---------------
-
-Private Sub exportModule(ByVal nameModule As String, ByVal nameFile As String)
-
-  Dim component As Object
-  For Each component In ThisWorkbook.VBProject.VBComponents
-    
-    If component.Name = nameModule Then
-      component.Export ThisWorkbook.Path & Application.PathSeparator & nameFile
-      MsgBox nameModule & " を " & ThisWorkbook.Path & _
-                  Application.PathSeparator & nameFile & " として保存しました。"
-    End If
-    
-  Next component
-
-End Sub
-
-
-
 
 '----------------------------- common Functions / Subs ---------------
 Private Function clearModules() As Boolean
@@ -383,12 +355,12 @@ Private Function list2array(ByVal pathFile As String) As Variant
 End Function
 
 '-------------------------------------------------------------
-' Name: ExportAll
+' Name: ExportAllModule
 ' Func: すべてExport
 ' Reference from
 ' http://d.hatena.ne.jp/jamzz/20131002/1380696685
 '-------------------------------------------------------------
-Public Sub ExportAll()
+Public Sub ExportAllModule()
     Dim export_path As String
     Dim full_path As String
     Dim vb_component As Object
@@ -423,12 +395,3 @@ Public Sub ExportAll()
     Next
 End Sub
 
-'-------------------------------------------------------------------------------
-' Name: RunAllTests
-' Func: テスト実行
-'-------------------------------------------------------------------------------
-Public Sub RunAllTests()
-  Dim Runner As New TestRunner
-  Runner.Run
-  Set Runner = Nothing
-End Sub
