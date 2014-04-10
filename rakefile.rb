@@ -33,6 +33,16 @@ task :release do
   puts "to be implemented"
 end
 
+desc "Show Excel"
+task :show => :open do
+  @book.Visible = true
+end
+
+desc "Hide Excel"
+task :hide => :open do
+  @book.Visible = false
+end
+
 # refered from 
 # http://osdir.com/ml/lang.ruby.japanese/2005-11/msg00180.html
 def getAbsolutePath filename
