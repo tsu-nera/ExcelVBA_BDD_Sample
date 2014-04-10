@@ -4,7 +4,7 @@ require 'win32ole'
 require 'pp'
 
 EXCEL_FILE  = "sample.xlsm"
-DEBUG_SHOW = false
+DEBUG_SHOW = true
 EXPORT_DIR_PATH = "./src"
 
 task :default => "open"
@@ -14,8 +14,16 @@ task :open do
   @book = openExcel(EXCEL_FILE)
 end
 
+desc "Save Excel File"
+task :save => :open do
+  @book.DisplayAlerts = false
+  @book.Save
+  @book.DisplayAlerts = true
+end
+
 desc "import All Modules"
-task :import => :open do
+task :import => :save do
+  # importの前にセーブをしないとメモリ不足でimportが失敗した
   @book.run("ThisWorkBook.reloadModule")
 end
 
@@ -23,8 +31,6 @@ desc "export all files to specified dir"
  task :export => :open do
   @book.run("ThisWorkBook.ExportAllModule")
 end
-# task :export  do
-# export()
 
 # http://officetanaka.net/excel/vba/vbe/index.htm
 desc "Open Visual Basic Editor for Application"
@@ -33,7 +39,7 @@ task :vbe => :open do
 end
 
 desc "Run All Tests"
-task :spec => [:hide, :vbe] do
+task :spec => [:hide, :vbe, :import] do
   @book.run("RunAllTests")
 end
 
@@ -82,6 +88,8 @@ end
 
 # refered from 
 # http://d.hatena.ne.jp/jamzz/20131002/1380696685
+# どうもwin32oleはExportをサポートしていないようにみえる。封印
+# 
 # def export()
 #   excel = WIN32OLE.new('Excel.Application')
 #   excel_file = getAbsolutePath(EXCEL_FILE)
