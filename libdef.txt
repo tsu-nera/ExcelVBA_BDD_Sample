@@ -1,15 +1,12 @@
 ' src
-./src/TestRunner.cls
-
 ./src/Calc.cls
-./src/Calc_spec.cls
 
-' Excel-TDD
+' spec
+./src/TestRunner.bas
+./src/Calc_spec.bas
+
+' tools
 ./excel-tdd/InlineRunner.bas
 ./excel-tdd/SpecSuite.cls
 ./excel-tdd/SpecDefinition.cls
 ./excel-tdd/SpecExpectation.cls
-' ./vendor/Excel-TDD/src/InlineRunner.bas
-' ./vendor/Excel-TDD/src/SpecSuite.cls
-' ./vendor/Excel-TDD/src/SpecDefinition.cls
-' ./vendor/Excel-TDD/src/SpecExpectation.cls

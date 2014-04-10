@@ -25,7 +25,7 @@ end
 desc "Run All Tests"
 # task :spec => [:open, :reload] do
 task :spec => :open do
-  @book.run("ThisWorkBook.RunAllTests")
+  @book.run("RunAllTests")
 end
 
 desc "make reliece excel file"
