@@ -13,16 +13,14 @@ Option Explicit
 Const FILENAME_LIBLIST As String = "libdef.txt" 'ライブラリリストのファイル名
 Const EXPORT_FOLDER As String = "src"
 
-'標準モジュール
-Const vbext_ct_StdModule As Integer = 1
-'クラス モジュール
-Const vbext_ct_ClassModule As Integer = 2
-'Microsoft Forms
-Const vbext_ct_MSForm As Integer = 3
-'ActiveX デザイナー
-Const vbext_ct_ActiveXDesigner As Integer = 11
-'ドキュメント モジュール
-Const vbext_ct_Document As Integer = 100
+' モジュール定義
+Enum Module
+    Standard = 1   '標準モジュール
+    Class = 2      'クラス モジュール
+    Forms = 3      'Microsoft Forms
+    ActiveX = 11   'ActiveX デザイナー
+    Document = 100 'ドキュメント モジュール
+End Enum
 
 '-------------------------------------------------------------------------------
 ' Name: reloadModule
@@ -37,7 +35,6 @@ Const vbext_ct_Document As Integer = 100
 '  See Also: http://d.hatena.ne.jp/language_and_engineering/20090731/p1
 '-------------------------------------------------------------------------------
 Public Sub reloadModule()
-Attribute reloadModule.VB_ProcData.VB_Invoke_Func = " \n14"
   '手動リロード用 Public関数
   
   Dim msgError As String
@@ -54,10 +51,9 @@ Private Function loadModule(ByVal pathConf As String) As String
   'Main: モジュールリストファイルに書いてある外部ライブラリを読み込む。
 
   '1. 全モジュールを削除
-  Dim isClear As Boolean
-  isClear = clearModules
+  Call clearModules
   
-  If isClear = False Then
+  If Not isClear Then
     loadModule = "Error: 標準モジュールの全削除に失敗しました。"
     Exit Function
   End If
@@ -117,19 +113,21 @@ Private Function loadModule(ByVal pathConf As String) As String
 End Function
 
 '----------------------------- common Functions / Subs ---------------
-Private Function clearModules() As Boolean
+Private Sub clearModules()
   '標準モジュール/クラスモジュール初期化(全削除)
   
   Dim component As Object
   For Each component In ThisWorkbook.VBProject.VBComponents
       
-    '標準モジュール(Type=1) / クラスモジュール(Type=2)を全て削除
-    If component.Type = 1 Or component.Type = 2 Then
+    '標準モジュール/クラスモジュールを全て削除
+    If component.Type = Module.Standard Or component.Type = Module.Class Then
       ThisWorkbook.VBProject.VBComponents.Remove component
     End If
     
   Next component
-  
+End Sub
+
+Private Function isClear() As Boolean
   '標準モジュール/クラスモジュールの合計数が0であればOK
   Dim cntBAS As Long
   cntBAS = countBAS()
@@ -138,30 +136,24 @@ Private Function clearModules() As Boolean
   cntClass = countClasses()
         
   If cntBAS = 0 And cntClass = 0 Then
-    clearModules = True
+    isClear = True
   Else
-    clearModules = False
+    isClear = False
   End If
 
 End Function
 
-
-
 Private Function countBAS() As Long
   Dim count As Long
-  count = countComponents(1) 'Type 1: bas
+  count = countComponents(Module.Standard)
   countBAS = count
 End Function
 
-
-
 Private Function countClasses() As Long
   Dim count As Long
-  count = countComponents(2) 'Type 2: class
+  count = countComponents(Module.Class)
   countClasses = count
 End Function
-
-
 
 Private Function countComponents(ByVal numType As Integer) As Long
   '存在する標準モジュール/クラスモジュールの数を数える
@@ -180,8 +172,6 @@ Private Function countComponents(ByVal numType As Integer) As Long
 
   countComponents = count
 End Function
-
-
 
 Private Function absPath(ByVal pathFile As String) As String
   ' ファイルパスを絶対パスに変換
@@ -261,9 +251,6 @@ Private Function absPath(ByVal pathFile As String) As String
   End If
 
 End Function
-
-
-
 
 Private Function checkExistFile(ByVal pathFile As String) As Boolean
 
@@ -371,20 +358,15 @@ Public Sub ExportAllModule()
 
         Dim extention As String
         Select Case vb_component.Type
-            Case vbext_ct_StdModule
-            '標準モジュール
-            extention = ".bas"
-            Case vbext_ct_ClassModule
-            'クラス モジュール
-            extention = ".cls"
-            Case vbext_ct_MSForm
-            'Microsoft Forms
-            extention = ".frm"
-            Case vbext_ct_ActiveXDesigner
-            'ActiveX デザイナー
-            extention = ".cls"
-            Case vbext_ct_Document
-            'ドキュメント モジュール
+            Case Module.Standard
+              extention = ".bas"
+            Case Module.Class
+              extention = ".cls"
+            Case Module.Forms
+              extention = ".frm"
+            Case Module.ActiveX
+              extention = ".cls"
+            Case Module.Document
              extention = ".cls"
         End Select
         
