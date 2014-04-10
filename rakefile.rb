@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 require 'rake/clean'
 require 'win32ole'
+require 'pp'
 
 EXCEL_FILE  = "sample.xlsm"
-DEBUG_SHOW = true  
+DEBUG_SHOW = false
 
 task :default => "open"
 
@@ -22,13 +23,18 @@ task :export => :open do
   @book.run("ThisWorkBook.ExportAll")
 end
 
+# http://officetanaka.net/excel/vba/vbe/index.htm
+desc "Open Visual Basic Editor for Application"
+task :vbe => :open do
+  @book.VBE.MainWindow.Visible = true
+end
+
 desc "Run All Tests"
-# task :spec => [:open, :reload] do
-task :spec => :open do
+task :spec => [:hide, :vbe] do
   @book.run("RunAllTests")
 end
 
-desc "make reliece excel file"
+desc "Make reliece excel file"
 task :release do
   puts "to be implemented"
 end
