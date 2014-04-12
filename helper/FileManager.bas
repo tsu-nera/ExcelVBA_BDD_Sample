@@ -214,19 +214,37 @@ Private Function getExtention(vbCompType As Integer) As String
 End Function
 
 Private Function getFolder(baseName As String) As String
-  Call defineHelperFiles
   
   If isHelperFile(baseName) Then
     getFolder = HELPER_FOLDER
-  ElseIf Right(baseName, 5) = SPEC_SUFFIX Then
+  ElseIf isSpecFile(baseName) Then
     getFolder = SPEC_FOLDER
   Else
     getFolder = SRC_FOLDER
   End If
 End Function
 
+Public Function isSrcFile(baseName As String) As Boolean
+  If isSpecFile(baseName) Then
+    isSrcFile = False
+  ElseIf isHelperFile(baseName) Then
+    isSrcFile = False
+  Else
+    isSrcFile = True
+  End If
+End Function
+
+Private Function isSpecFile(baseName As String) As Boolean
+  If Right(baseName, 5) = SPEC_SUFFIX Then
+    isSpecFile = True
+  Else
+    isSpecFile = False
+  End If
+End Function
+
 Private Function isHelperFile(baseName As String) As Boolean
   Dim fileName As Variant
+  Call defineHelperFiles
 
   For Each fileName In helper_files
     If fileName = baseName Then

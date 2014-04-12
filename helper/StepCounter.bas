@@ -21,14 +21,17 @@ Public Sub ShowTotalCodeLinesInProject()
   str = str + SPrintF("-----------------------\n")
   str = str + SPrintF(" FileName      Execute \n")
   str = str + SPrintF("-----------------------\n")
+
   For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
-    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-    TotalCount = TotalCount + vbcLine
-  str = str + SPrintF(" %-17s%4d \n", vbcComp.name, vbcLine)
+    If FileManager.isSrcFile(vbcComp.name) Then
+      vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+      TotalCount = TotalCount + vbcLine
+      str = str + SPrintF(" %-17s%4d \n", vbcComp.name, vbcLine)
+    End If
   Next vbcComp
   
   str = str + SPrintF("-----------------------\n")
-  str = str + SPrintF(" Sum             %4d \n", TotalCount)
+  str = str + SPrintF(" Sum              %4d \n", TotalCount)
   str = str + SPrintF("-----------------------\n")
 
   Debug.Print str

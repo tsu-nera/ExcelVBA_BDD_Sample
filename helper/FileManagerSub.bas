@@ -3,7 +3,7 @@ Attribute VB_Name = "FileManagerSub"
 ' Name: FileManagerSub
 '-------------------------------------------------------------
 Option Explicit
-Const FILEMANAGER_PATH As String = "src\FileManager.bas"
+Const FILEMANAGER_PATH As String = "helper\FileManager.bas"
 
 '-------------------------------------------------------------------------------
 ' Name: exportFileManager
