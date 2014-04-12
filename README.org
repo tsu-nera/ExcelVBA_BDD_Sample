@@ -1,0 +1,12 @@
+* 外部ライブラリ
+ツールバーから 参照設定を選択肢、以下を追加
+
+- Microsoft Visual Basic for Application Extention
+- Excel-VBA
+
+  git submodule init
+  git submodule update
+
+* 動作確認
+- Windows 7 64bit
+- Excel 2010

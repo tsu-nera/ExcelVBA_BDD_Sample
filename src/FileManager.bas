@@ -1,65 +1,22 @@
-Attribute VB_Name = "FileManager1"
+Attribute VB_Name = "FileManager"
+
 Option Explicit
 
-Const INPORT_FOLDER As String = "src"
+Const INPORT_FOLDER As String = "src" 'Export Directory
 
-' モジュール定義
 Enum Module
-    Standard = 1   '標準モジュール
-    Class = 2      'クラス モジュール
-    Forms = 3      'Microsoft Forms
-    ActiveX = 11   'ActiveX デザイナー
-    Document = 100 'ドキュメント モジュール
+    Standard = 1
+    Class = 2
+    Forms = 3
+    ActiveX = 11
+    Document = 100
 End Enum
 
 '-------------------------------------------------------------
-' Name: reloadThisWorkbook
-'
-' http://social.msdn.microsoft.com/Forums/office/en-US/
-' b823faa5-a432-4435-84cd-a04eadcbd1f5/
-' loading-a-subroutine-into-thisworkbook-using-vba?forum=exceldev
-'
-' http://www.ozgrid.com/forum/showthread.php?t=26078
+' Name: importAllModules()
+' Func: Import All Modules  (without FileManager)
 '-------------------------------------------------------------
-Public Sub reloadThisWorkbook()
-  Call clearThisWorkbook
-  Call importThisWorkbook
-End Sub
-
-Private Sub clearThisWorkbook()
-  With ThisWorkbook.VBProject.VBComponents("ThisWorkbook").CodeModule
-    .DeleteLines StartLine:=1, count:=.CountOfLines
-  End With
-End Sub
- 
-Private Sub importThisWorkbook()
-  Dim full_path As String
-  full_path = ThisWorkbook.Path & "\" & INPORT_FOLDER & "\ThisWorkbook.cls"
-  Debug.Print "Import from " & full_path
-
-  With ThisWorkbook.VBProject.VBComponents("ThisWorkbook").CodeModule
-     .AddFromFile full_path
-     
-     ' ゴミの除去
-     .DeleteLines StartLine:=1, count:=4
-  End With
-End Sub
-
-Private Sub clearModules()
-  '標準モジュール/クラスモジュール初期化(全削除)
-  
-  Dim component As Object
-  For Each component In ThisWorkbook.VBProject.VBComponents
-      
-    '標準モジュール/クラスモジュールを全て削除
-    If component.Type = Module.Standard Or component.Type = Module.Class Then
-      ThisWorkbook.VBProject.VBComponents.Remove component
-    End If
-    
-  Next component
-End Sub
-
-Private Sub importAllModule()
+Public Sub importAllModules()
     Dim myFSO As New FileSystemObject
     Dim myFolder As Folder
     Dim myFile As File
@@ -68,7 +25,7 @@ Private Sub importAllModule()
   
     Set myFSO = CreateObject("Scripting.FileSystemObject")
     Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & INPORT_FOLDER)
-    
+
     Call clearModules
     
     For Each myFile In myFolder.Files
@@ -81,13 +38,15 @@ Private Sub importAllModule()
           With ThisWorkbook.VBProject.VBComponents(myBaseName).CodeModule
             .DeleteLines StartLine:=1, count:=.CountOfLines
             .AddFromFile myFile
-            
-             ' ゴミの除去
+
+            ' Delete header lines
             .DeleteLines StartLine:=1, count:=4
           End With
         Case Else
           ThisWorkbook.VBProject.VBComponents.Import myFile
         End Select
+      ElseIf myBaseName = "FileManager" Then
+        'Nop
       ElseIf myExtention = "bas" Then
           ThisWorkbook.VBProject.VBComponents.Import myFile
       End If
@@ -98,13 +57,31 @@ Private Sub importAllModule()
     Set myFile = Nothing
 End Sub
 
+Private Sub clearModules()
+  
+  Dim component As Object
+  For Each component In ThisWorkbook.VBProject.VBComponents
+      
+    If component.Type = Module.Standard Or component.Type = Module.Class Then
+      If component.Name <> "FileManager" Then
+        ThisWorkbook.VBProject.VBComponents.Remove component
+      End If
+    End If
+    
+  Next component
+End Sub
+
+Public Function isValidImportFile(filename As String) As Boolean
+  isValidImportFile = True
+End Function
+
 '-------------------------------------------------------------
-' Name: ExportAllModule
-' Func: すべてExport
+' Name: exportAllModules
+' Func: Export All Files (without FileManager)
 ' Reference from
 ' http://d.hatena.ne.jp/jamzz/20131002/1380696685
 '-------------------------------------------------------------
-Public Sub ExportAllModule()
+Public Sub exportAllModules()
     Dim export_path As String
     Dim full_path As String
     Dim vb_component As Object
@@ -127,10 +104,12 @@ Public Sub ExportAllModule()
              extention = ".cls"
         End Select
         
-        ' エクスポート
         full_path = ThisWorkbook.Path & "\" & export_path & "\" & vb_component.Name & extention
-        Debug.Print "Export to " & full_path
-        vb_component.Export full_path
+
+        If vb_component.Name <> "FileManager" Then
+          Debug.Print "Export to " & full_path
+          vb_component.Export full_path
+        End If
     Next
 End Sub
 
