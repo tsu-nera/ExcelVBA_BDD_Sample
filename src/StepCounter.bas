@@ -8,53 +8,20 @@ Attribute VB_Name = "StepCounter"
 '-----------------------------------------------------------------------------------
 Option Explicit
 
-' TODO Define IgnoreList
-
 '---------------------------------------------------------------------------------
 ' Name: ShowTotalCodeLinesInProject
 '----------------------------------------------------------------------------------
 Public Sub ShowTotalCodeLinesInProject()
   Dim vbcComp As VBIDE.VBComponent
   Dim vbcLine As Integer
-
-  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
-    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-    Debug.Print vbcCode.name & "   " & vbcLine
-  Next vbcComp
-End Sub
-
-Public Sub ExportTotalCodeLinesInProject()
-End Sub
-
-Public Sub ExportTotalCodeLinesInProjectToCSV()
-  Dim vbcComp As VBIDE.VBComponent
-  Dim vbcLine As Integer
-
-  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
-    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-    Debug.Print vbcLine
-  Next vbcComp
-End Sub
-
-'---------------------------------------------------------------------------------
-' Name: TotalCodeLinesInProject
-'----------------------------------------------------------------------------------
-Private Function TotalCodeLinesInProject(VBProj As VBIDE.VBProject) As Long
- 
-  Dim VBComp As VBIDE.VBComponent
-  Dim LineCount As Long
-
-  If VBProj.Protection = vbext_pp_locked Then
-    TotalCodeLinesInProject = -1
-    Exit Function
-  End If
-
-  For Each VBComp In VBProj.VBComponents
-    LineCount = LineCount + TotalCodeLinesInVBComponent(VBComp)
-  Next VBComp
+  Dim TotalCount As Long: TotalCount = 0
   
-  TotalCodeLinesInProject = LineCount
-End Function
+  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
+    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+    TotalCount = TotalCount + vbcLine
+  Next vbcComp
+
+End Sub
 
 '---------------------------------------------------------------------------------
 ' Name: TotalCodeLinesInProject
@@ -84,3 +51,19 @@ Private Function TotalCodeLinesInVBComponent(VBComp As VBIDE.VBComponent) As Lon
   TotalCodeLinesInVBComponent = LineCount
 End Function
 
+Public Sub generatePrint(filename As String, LineCount As Integer)
+  'Debug.Print filename & "   " & LineCount
+End Sub
+
+Public Sub ExportTotalCodeLinesInProject()
+End Sub
+
+Public Sub ExportTotalCodeLinesInProjectToCSV()
+  Dim vbcComp As VBIDE.VBComponent
+  Dim vbcLine As Integer
+
+  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
+    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+    Debug.Print vbcLine
+  Next vbcComp
+End Sub
