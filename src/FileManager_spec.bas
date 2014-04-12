@@ -11,12 +11,6 @@ Sub Specs()
     .Expect(Result).ToEqual False
   End With
 
-  With Specs.It("should not import # file")
-    file_name = "#test.bas#"
-     Result = FileManager.isValidImportFile(file_name)
-    .Expect(Result).ToEqual False
-  End With
-
   With Specs.It("should not import *.cls~ file")
       file_name = "test.cls~"
      Result = FileManager.isValidImportFile(file_name)
@@ -25,6 +19,12 @@ Sub Specs()
 
   With Specs.It("should not import *.bas~ file")
      file_name = "test.bas~"
+     Result = FileManager.isValidImportFile(file_name)
+    .Expect(Result).ToEqual False
+  End With
+
+  With Specs.It("should not import # file")
+    file_name = "#test.bas#"
      Result = FileManager.isValidImportFile(file_name)
     .Expect(Result).ToEqual False
   End With

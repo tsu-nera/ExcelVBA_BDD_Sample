@@ -19,7 +19,7 @@ Public Sub ShowTotalCodeLinesInProject()
 
   For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
     vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-    Debug.Print vbcCode.Name & "   " & vbcLine
+    Debug.Print vbcCode.name & "   " & vbcLine
   Next vbcComp
 End Sub
 
@@ -61,7 +61,7 @@ End Function
 '----------------------------------------------------------------------------------
 Private Function TotalCodeLinesInVBComponent(VBComp As VBIDE.VBComponent) As Long
   Dim N As Long
-  Dim S As String
+  Dim s As String
   Dim LineCount As Long
   
   If VBComp.Collection.Parent.Protection = vbext_pp_locked Then
@@ -71,10 +71,10 @@ Private Function TotalCodeLinesInVBComponent(VBComp As VBIDE.VBComponent) As Lon
   
   With VBComp.CodeModule
     For N = 1 To .CountOfLines
-      S = .Lines(N, 1)
-      If Trim(S) = vbNullString Then
+      s = .Lines(N, 1)
+      If Trim(s) = vbNullString Then
         ' blank line, skip it
-      ElseIf Left(Trim(S), 1) = "'" Then
+      ElseIf Left(Trim(s), 1) = "'" Then
         ' comment line, skip it
       Else
         LineCount = LineCount + 1

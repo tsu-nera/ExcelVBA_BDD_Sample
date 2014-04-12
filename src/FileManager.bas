@@ -4,6 +4,8 @@ Attribute VB_Name = "FileManager"
 '-------------------------------------------------------------
 Option Explicit
 
+Public Const WORK_FOLDER As String = "src" 'Your Working Directory
+
 Enum Module
   Standard = 1
   Class = 2
@@ -12,30 +14,32 @@ Enum Module
   Document = 100
 End Enum
 
-Const WORK_FOLDER As String = "src" 'Export Directory
-
 '-------------------------------------------------------------
 ' Name: importAllModules()
 ' Func: Import All Modules  (without FileManager)
 '-------------------------------------------------------------
 Public Sub importAllModules()
-    Dim myFSO As New FileSystemObject
-    Dim myFolder As Folder
-    Dim myFile As File
-    Dim myExtention As String
-    Dim myBaseName As String
+  Dim myFSO As New FileSystemObject
+  Dim myFolder As Folder
+  Dim myFile As File
+  Dim myExtention As String
+  Dim myBaseName As String
   
-    Set myFSO = CreateObject("Scripting.FileSystemObject")
-    Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & WORK_FOLDER)
+  Set myFSO = CreateObject("Scripting.FileSystemObject")
+  Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & WORK_FOLDER)
 
-    Call clearModules
+  Call clearModules
     
-    For Each myFile In myFolder.Files
-      myExtention = myFSO.GetExtensionName(myFile.Name)
-      myBaseName = myFSO.GetBaseName(myFile.Name)
-      
-      If myExtention = "cls" Then
-        Select Case Left(myBaseName, 5)
+  For Each myFile In myFolder.Files
+    myExtention = myFSO.GetExtensionName(myFile.name)
+    myBaseName = myFSO.GetBaseName(myFile.name)
+    
+    If Not isValidImportFile(myFile.name) Then
+      GoTo Next_myFile
+    End If
+
+    If myExtention = "cls" Then
+      Select Case Left(myBaseName, 5)
         Case "Sheet", "ThisW"
           With ThisWorkbook.VBProject.VBComponents(myBaseName).CodeModule
             .DeleteLines StartLine:=1, count:=.CountOfLines
@@ -46,17 +50,17 @@ Public Sub importAllModules()
           End With
         Case Else
           ThisWorkbook.VBProject.VBComponents.Import myFile
-        End Select
-      ElseIf Myself(myBaseName) Then
-        'Nop
-      ElseIf myExtention = "bas" Then
-          ThisWorkbook.VBProject.VBComponents.Import myFile
-      End If
-    Next myFile
+      End Select
+    ElseIf myExtention = "bas" Then
+      ThisWorkbook.VBProject.VBComponents.Import myFile
+    End If
     
-    Set myFSO = Nothing
-    Set myFolder = Nothing
-    Set myFile = Nothing
+Next_myFile:
+  Next myFile
+    
+  Set myFSO = Nothing
+  Set myFolder = Nothing
+  Set myFile = Nothing
 End Sub
 
 ' It's dengerous procedure, be careful
@@ -65,7 +69,7 @@ Private Sub clearModules()
   For Each component In ThisWorkbook.VBProject.VBComponents
       
     If component.Type = Module.Standard Or component.Type = Module.Class Then
-      If Not Myself(component.Name) Then
+      If Not Myself(component.name) Then
         ThisWorkbook.VBProject.VBComponents.Remove component
       End If
     End If
@@ -74,7 +78,23 @@ Private Sub clearModules()
 End Sub
 
 Public Function isValidImportFile(filename As String) As Boolean
-  isValidImportFile = True
+
+  Dim myFSO As New FileSystemObject
+  Set myFSO = CreateObject("Scripting.FileSystemObject")
+  
+  If Left(filename, 1) = "." Then
+    isValidImportFile = False
+  ElseIf Left(filename, 1) = "#" Then
+    isValidImportFile = False
+  ElseIf Right(filename, 1) = "~" Then
+        isValidImportFile = False
+  ElseIf Myself(myFSO.GetBaseName(filename)) Then
+    isValidImportFile = False
+  Else
+    isValidImportFile = True
+  End If
+
+  Set myFSO = Nothing
 End Function
 
 Private Function Myself(baseName As String) As Boolean
@@ -96,8 +116,8 @@ Public Sub exportAllModules()
     
     extention = getExtention(vb_component)
 
-    If Not Myself(vb_component.Name) Then
-      full_path = getAbsolutePath(vb_component.Name, extention)
+    If Not Myself(vb_component.name) Then
+      full_path = getAbsolutePath(vb_component.name, extention)
       Debug.Print "Export to " & full_path
       vb_component.Export full_path
     End If
