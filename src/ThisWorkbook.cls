@@ -36,11 +36,15 @@ Public Sub importFileManager()
   ThisWorkbook.VBProject.VBComponents.Remove _
     ThisWorkbook.VBProject.VBComponents("FileManager")
     
+  Debug.Print "Import from " & getAbsoluteFileManagerPath
   ThisWorkbook.VBProject.VBComponents.Import getAbsoluteFileManagerPath
 End Sub
 
 Private Function getAbsoluteFileManagerPath() As String
   getAbsoluteFileManagerPath = ThisWorkbook.Path & "\" & FILEMANAGER_PATH
 End Function
+
+
+
 
 

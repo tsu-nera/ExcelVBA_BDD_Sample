@@ -1,16 +1,18 @@
 Attribute VB_Name = "FileManager"
-
+'-------------------------------------------------------------
+' Name: FileManager
+'-------------------------------------------------------------
 Option Explicit
 
-Const INPORT_FOLDER As String = "src" 'Export Directory
-
 Enum Module
-    Standard = 1
-    Class = 2
-    Forms = 3
-    ActiveX = 11
-    Document = 100
+  Standard = 1
+  Class = 2
+  Forms = 3
+  ActiveX = 11
+  Document = 100
 End Enum
+
+Const WORK_FOLDER As String = "src" 'Export Directory
 
 '-------------------------------------------------------------
 ' Name: importAllModules()
@@ -24,7 +26,7 @@ Public Sub importAllModules()
     Dim myBaseName As String
   
     Set myFSO = CreateObject("Scripting.FileSystemObject")
-    Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & INPORT_FOLDER)
+    Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & WORK_FOLDER)
 
     Call clearModules
     
@@ -45,7 +47,7 @@ Public Sub importAllModules()
         Case Else
           ThisWorkbook.VBProject.VBComponents.Import myFile
         End Select
-      ElseIf myBaseName = "FileManager" Then
+      ElseIf Myself(myBaseName) Then
         'Nop
       ElseIf myExtention = "bas" Then
           ThisWorkbook.VBProject.VBComponents.Import myFile
@@ -57,13 +59,13 @@ Public Sub importAllModules()
     Set myFile = Nothing
 End Sub
 
+' It's dengerous procedure, be careful
 Private Sub clearModules()
-  
   Dim component As Object
   For Each component In ThisWorkbook.VBProject.VBComponents
       
     If component.Type = Module.Standard Or component.Type = Module.Class Then
-      If component.Name <> "FileManager" Then
+      If Not Myself(component.Name) Then
         ThisWorkbook.VBProject.VBComponents.Remove component
       End If
     End If
@@ -75,6 +77,10 @@ Public Function isValidImportFile(filename As String) As Boolean
   isValidImportFile = True
 End Function
 
+Private Function Myself(baseName As String) As Boolean
+  Myself = (baseName = "FileManager")
+End Function
+
 '-------------------------------------------------------------
 ' Name: exportAllModules
 ' Func: Export All Files (without FileManager)
@@ -82,34 +88,41 @@ End Function
 ' http://d.hatena.ne.jp/jamzz/20131002/1380696685
 '-------------------------------------------------------------
 Public Sub exportAllModules()
-    Dim export_path As String
-    Dim full_path As String
-    Dim vb_component As Object
+  Dim full_path As String
+  Dim extention As String
+  Dim vb_component As Object
     
-    export_path = INPORT_FOLDER
+  For Each vb_component In ThisWorkbook.VBProject.VBComponents
     
-    For Each vb_component In ThisWorkbook.VBProject.VBComponents
+    extention = getExtention(vb_component)
 
-        Dim extention As String
-        Select Case vb_component.Type
-            Case Module.Standard
-              extention = ".bas"
-            Case Module.Class
-              extention = ".cls"
-            Case Module.Forms
-              extention = ".frm"
-            Case Module.ActiveX
-              extention = ".cls"
-            Case Module.Document
-             extention = ".cls"
-        End Select
-        
-        full_path = ThisWorkbook.Path & "\" & export_path & "\" & vb_component.Name & extention
-
-        If vb_component.Name <> "FileManager" Then
-          Debug.Print "Export to " & full_path
-          vb_component.Export full_path
-        End If
-    Next
+    If Not Myself(vb_component.Name) Then
+      full_path = getAbsolutePath(vb_component.Name, extention)
+      Debug.Print "Export to " & full_path
+      vb_component.Export full_path
+    End If
+  Next
 End Sub
 
+Private Function getExtention(myComponent As VBComponent) As String
+  Dim extention As String
+  
+  Select Case myComponent.Type
+    Case Module.Standard
+      extention = ".bas"
+    Case Module.Class
+      extention = ".cls"
+    Case Module.Forms
+      extention = ".frm"
+    Case Module.ActiveX
+      extention = ".cls"
+    Case Module.Document
+      extention = ".cls"
+  End Select
+
+  getExtention = extention
+End Function
+
+Private Function getAbsolutePath(baseName, extName) As String
+  getAbsolutePath = ThisWorkbook.Path & "\" & WORK_FOLDER & "\" & baseName & extName
+End Function
