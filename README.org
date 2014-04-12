@@ -1,12 +1,20 @@
-* 外部ライブラリ
+* Excel VBA 用 開発環境
+** 機能
+
+
+** 外部ライブラリ
 ツールバーから 参照設定を選択肢、以下を追加
-
 - Microsoft Visual Basic for Application Extention
-- Excel-VBA
 
-  git submodule init
-  git submodule update
+ほか、以下のツールを利用。
 
-* 動作確認
+- Excel-VBA ・・・ VBA用テスティングフレームワーク
+  - 
+- Mini Templator ・・・VBA用テンプレートエンジン
+  - [[http://www.source-code.biz/MiniTemplator/][MiniTemplator - A compact template engine for HTML files]]
+
+** Submodules
+
+** 動作確認
 - Windows 7 64bit
 - Excel 2010
