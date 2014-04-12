@@ -1,14 +1,13 @@
 * Excel VBA 用 開発環境
 ** 機能
-
-
 ** 外部ライブラリ
 ツールバーから 参照設定を選択肢、以下を追加
 - Microsoft Visual Basic for Application Extention
 
 ほか、以下のツールを利用。
 
-- Excel-VBA ・・・ VBA用テスティングフレームワーク
+- Excel-TDD ・・・ VBA用テスティングフレームワーク
+
 ** Submodules
 
 ** 動作確認

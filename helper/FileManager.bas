@@ -4,7 +4,12 @@ Attribute VB_Name = "FileManager"
 '-------------------------------------------------------------
 Option Explicit
 
-Public Const WORK_FOLDER As String = "src" 'Your Working Directory
+Public Const SRC_FOLDER As String = "src"       'source folder
+Public Const SPEC_FOLDER As String = "spec"     'spec folder
+Public Const HELPER_FOLDER As String = "helper" 'helper tool folder
+
+Dim helper_files() As Variant
+Const SPEC_SUFFIX As String = "_spec"
 
 Enum Module
   Standard = 1
@@ -13,6 +18,18 @@ Enum Module
   ActiveX = 11
   Document = 100
 End Enum
+
+Private Sub defineHelperFiles()
+  helper_files = Array("FileManager", _
+                       "FileManagerSub", _
+                       "InlineRunner", _
+                       "SpecDefinition", _
+                       "SpecExpectation", _
+                       "SpecRunner", _
+                       "SpecSuite", _
+                       "StepCounter", _
+                       "mdlPrintF")
+End Sub
 
 '-------------------------------------------------------------
 ' Name: importAllModules()
@@ -38,13 +55,30 @@ Private Sub clearAllModules()
 End Sub
 
 Private Sub importAllModulesCore()
-  Dim myFSO As FileSystemObject
-  Dim myFolder As Folder
+  Dim myFSO As New FileSystemObject
+  Dim srcFolder As folder
+  Dim specFolder As folder
+  Dim helperFolder As folder
+  
+  Set srcFolder = myFSO.getFolder(ThisWorkbook.Path & "\" & SRC_FOLDER)
+  Call importModulesIn(srcFolder.files)
+  
+  Set specFolder = myFSO.getFolder(ThisWorkbook.Path & "\" & SPEC_FOLDER)
+  Call importModulesIn(specFolder.files)
+  
+  Set helperFolder = myFSO.getFolder(ThisWorkbook.Path & "\" & HELPER_FOLDER)
+  Call importModulesIn(helperFolder.files)
+    
+  Set myFSO = Nothing
+  Set srcFolder = Nothing
+  Set specFolder = Nothing
+  Set helperFolder = Nothing
+End Sub
+
+Sub importModulesIn(files As files)
   Dim myFile As File
 
-  Set myFSO = CreateObject("Scripting.FileSystemObject")
-  Set myFolder = myFSO.GetFolder(ThisWorkbook.Path & "\" & WORK_FOLDER)
-  For Each myFile In myFolder.Files
+  For Each myFile In files
     
     If Not isValidImportFile(myFile.name) Then
       GoTo Next_myFile
@@ -62,9 +96,7 @@ Private Sub importAllModulesCore()
     
 Next_myFile:
   Next myFile
-    
-  Set myFSO = Nothing
-  Set myFolder = Nothing
+  
   Set myFile = Nothing
 End Sub
 
@@ -85,8 +117,8 @@ Private Sub InsertLines(myFile As String)
   Set myFSO = Nothing
 End Sub
 
-Public Function isExcelOnject(filename As String) As Boolean
-  Select Case Left(filename, 5)
+Public Function isExcelOnject(fileName As String) As Boolean
+  Select Case Left(fileName, 5)
     Case "Sheet"
       isExcelOnject = True
     Case "ThisW"
@@ -96,19 +128,19 @@ Public Function isExcelOnject(filename As String) As Boolean
   End Select
 End Function
 
-Public Function isValidImportFile(filename As String) As Boolean
+Public Function isValidImportFile(fileName As String) As Boolean
   Dim myFSO As FileSystemObject
   Set myFSO = CreateObject("Scripting.FileSystemObject")
   
-  If Left(filename, 1) = "." Then
+  If Left(fileName, 1) = "." Then
     isValidImportFile = False
-  ElseIf Left(filename, 1) = "#" Then
+  ElseIf Left(fileName, 1) = "#" Then
     isValidImportFile = False
-  ElseIf Right(filename, 1) = "~" Then
+  ElseIf Right(fileName, 1) = "~" Then
         isValidImportFile = False
-  ElseIf isMySelf(myFSO.GetBaseName(filename)) Then
+  ElseIf isMySelf(myFSO.GetBaseName(fileName)) Then
     isValidImportFile = False
-  ElseIf Not hasValidExtention(filename) Then
+  ElseIf Not hasValidExtention(fileName) Then
     isValidImportFile = False
   Else
     isValidImportFile = True
@@ -121,11 +153,11 @@ Private Function isMySelf(baseName As String) As Boolean
   isMySelf = (baseName = "FileManager")
 End Function
 
-Private Function hasValidExtention(filename As String) As Boolean
+Private Function hasValidExtention(fileName As String) As Boolean
   Dim myFSO As FileSystemObject
   Set myFSO = CreateObject("Scripting.FileSystemObject")
 
-  Select Case myFSO.GetExtensionName(filename)
+  Select Case myFSO.GetExtensionName(fileName)
     Case "bas", "cls", "frm"
       hasValidExtention = True
     Case Else
@@ -144,24 +176,28 @@ End Function
 Public Sub exportAllModules()
   Dim full_path As String
   Dim extention As String
+  Dim baseName As String
+  Dim folder As String
   Dim vb_component As Object
     
   For Each vb_component In ThisWorkbook.VBProject.VBComponents
     
-    extention = getExtention(vb_component)
+    baseName = vb_component.name
+    extention = getExtention(vb_component.Type)
+    folder = getFolder(vb_component.name)
 
-    If Not isMySelf(vb_component.name) Then
-      full_path = getAbsolutePath(vb_component.name, extention)
+    If Not isMySelf(baseName) Then
+      full_path = getAbsolutePath(folder, baseName, extention)
       Debug.Print "Export to " & full_path
       vb_component.Export full_path
     End If
   Next
 End Sub
 
-Private Function getExtention(myComponent As VBComponent) As String
+Private Function getExtention(vbCompType As Integer) As String
   Dim extention As String
   
-  Select Case myComponent.Type
+  Select Case vbCompType
     Case Module.Standard
       extention = ".bas"
     Case Module.Class
@@ -177,6 +213,33 @@ Private Function getExtention(myComponent As VBComponent) As String
   getExtention = extention
 End Function
 
-Private Function getAbsolutePath(baseName, extName) As String
-  getAbsolutePath = ThisWorkbook.Path & "\" & WORK_FOLDER & "\" & baseName & extName
+Private Function getFolder(baseName As String) As String
+  Call defineHelperFiles
+  
+  If isHelperFile(baseName) Then
+    getFolder = HELPER_FOLDER
+  ElseIf Right(baseName, 5) = SPEC_SUFFIX Then
+    getFolder = SPEC_FOLDER
+  Else
+    getFolder = SRC_FOLDER
+  End If
+End Function
+
+Private Function isHelperFile(baseName As String) As Boolean
+  Dim fileName As Variant
+
+  For Each fileName In helper_files
+    If fileName = baseName Then
+      isHelperFile = True
+      Exit Function
+    End If
+  Next
+          
+  isHelperFile = False
+End Function
+
+Private Function getAbsolutePath(folder As String, _
+                                  baseName As String, _
+                                  extName As String) As String
+  getAbsolutePath = ThisWorkbook.Path & "\" & folder & "\" & baseName & extName
 End Function

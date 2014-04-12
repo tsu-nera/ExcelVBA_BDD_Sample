@@ -1,7 +1,7 @@
-Attribute VB_Name = "FileSubManager"
-'-------------------------------------------------------------------------------
-' Name: FileSubManager
-'-------------------------------------------------------------------------------
+Attribute VB_Name = "FileManagerSub"
+'-------------------------------------------------------------
+' Name: FileManagerSub
+'-------------------------------------------------------------
 Option Explicit
 Const FILEMANAGER_PATH As String = "src\FileManager.bas"
 
