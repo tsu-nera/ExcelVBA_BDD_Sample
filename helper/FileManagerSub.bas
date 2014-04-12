@@ -20,14 +20,22 @@ Public Sub exportFileManager()
 End Sub
 
 '-------------------------------------------------------------------------------
-' Name: importFileManager
-' Func: Import FileManager.bas
+' Name: clearFileManager
+' Func: clear FileManager.bas
 '-------------------------------------------------------------------------------
-Public Sub importFileManager()
+Public Sub clearFileManager()
   If ModExists("FileManager") Then
     ThisWorkbook.VBProject.VBComponents.Remove _
       ThisWorkbook.VBProject.VBComponents("FileManager")
   End If
+End Sub
+
+'-------------------------------------------------------------------------------
+' Name: importFileManager
+' Func: Import FileManager.bas
+'-------------------------------------------------------------------------------
+Public Sub importFileManager()
+  clearFileManager
     
   Debug.Print "Import from " & getAbsoluteFileManagerPath
   ThisWorkbook.VBProject.VBComponents.Import getAbsoluteFileManagerPath

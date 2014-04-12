@@ -40,6 +40,15 @@ Public Sub importAllModules()
   Call importAllModulesCore
 End Sub
 
+'-------------------------------------------------------------
+' Name: release
+' Func: Import Src Modules Only
+'-------------------------------------------------------------
+Public Sub release()
+  Call clearAllModules
+  Call importSrcMolues
+End Sub
+
 ' It's dengerous procedure, be careful
 Private Sub clearAllModules()
   Dim component As Object
@@ -52,6 +61,21 @@ Private Sub clearAllModules()
     End If
     
   Next component
+End Sub
+
+Private Sub importSrcMolues()
+  Dim myFSO As New FileSystemObject
+  Dim srcFolder As folder
+  Dim specFolder As folder
+  Dim helperFolder As folder
+  
+  Set srcFolder = myFSO.getFolder(ThisWorkbook.Path & "\" & SRC_FOLDER)
+  Call importModulesIn(srcFolder.files)
+
+  Set myFSO = Nothing
+  Set srcFolder = Nothing
+  Set specFolder = Nothing
+  Set helperFolder = Nothing
 End Sub
 
 Private Sub importAllModulesCore()

@@ -44,9 +44,9 @@ task :spec => [:hide, :vbe, :import] do
   @book.run("RunAllTests")
 end
 
-desc "Make reliece excel file"
-task :release do
-  puts "to be implemented"
+desc "Make releasee excel file"
+task :release => :open do
+  @book.run("release")
 end
 
 desc "Show Excel"
