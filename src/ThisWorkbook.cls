@@ -68,4 +68,3 @@ Private Function getAbsoluteFileManagerPath() As String
   getAbsoluteFileManagerPath = ThisWorkbook.Path & "\" & FILEMANAGER_PATH
 End Function
 
-

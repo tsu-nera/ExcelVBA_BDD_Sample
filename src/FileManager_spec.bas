@@ -34,6 +34,24 @@ Sub Specs()
      Result = FileManager.isValidImportFile(file_name)
     .Expect(Result).ToEqual True
   End With
-  
+
+  With Specs.It("should be Excel Object")
+     file_name = "ThisWorkBook.cls"
+     Result = FileManager.isExcelOnject(file_name)
+    .Expect(Result).ToEqual True
+  End With
+
+  With Specs.It("should be Excel Object")
+     file_name = "Sheet2.cls"
+     Result = FileManager.isExcelOnject(file_name)
+    .Expect(Result).ToEqual True
+  End With
+
+  With Specs.It("should not be Excel Object")
+     file_name = "test.cls"
+     Result = FileManager.isExcelOnject(file_name)
+    .Expect(Result).ToEqual False
+  End With
+
   InlineRunner.RunSuite Specs
 End Sub
