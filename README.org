@@ -9,10 +9,6 @@
 ほか、以下のツールを利用。
 
 - Excel-VBA ・・・ VBA用テスティングフレームワーク
-  - 
-- Mini Templator ・・・VBA用テンプレートエンジン
-  - [[http://www.source-code.biz/MiniTemplator/][MiniTemplator - A compact template engine for HTML files]]
-
 ** Submodules
 
 ** 動作確認

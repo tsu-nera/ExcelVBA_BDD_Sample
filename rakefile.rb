@@ -24,13 +24,13 @@ end
 desc "import All Modules"
 task :import => :open do
   @book.run("importAllModules")
-  @book.run("ThisWorkBook.importFileManager")
+  @book.run("importFileManager")
 end
 
 desc "export all files to specified dir"
  task :export => :open do
   @book.run("exportAllModules")
-  @book.run("ThisWorkBook.exportFileManager")
+  @book.run("exportFileManager")
 end
 
 # http://officetanaka.net/excel/vba/vbe/index.htm
