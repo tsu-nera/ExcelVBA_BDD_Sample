@@ -44,7 +44,7 @@ Public Sub RunSuites(SuiteCol As Collection, Optional ShowFailureDetails As Bool
     Dim PendingSpecs As Integer
     Dim ShowingResults As Boolean
     Dim Indentation As String
-    Dim i As Integer
+    Dim I As Integer
     
     For Each Suite In SuiteCol
         If Not Suite Is Nothing Then
@@ -111,7 +111,7 @@ End Function
 
 Private Function FailureMessage(Spec As SpecDefinition, ShowFailureDetails As Boolean, Indentation As String) As String
     Dim FailedExpectation As SpecExpectation
-    Dim i As Integer
+    Dim I As Integer
     
     FailureMessage = ResultMessage(Spec, "X")
     
@@ -121,8 +121,8 @@ Private Function FailureMessage(Spec As SpecDefinition, ShowFailureDetails As Bo
         For Each FailedExpectation In Spec.FailedExpectations
             FailureMessage = FailureMessage & Indentation & "  " & FailedExpectation.FailureMessage
             
-            If i + 1 <> Spec.FailedExpectations.count Then: FailureMessage = FailureMessage & vbNewLine
-            i = i + 1
+            If I + 1 <> Spec.FailedExpectations.count Then: FailureMessage = FailureMessage & vbNewLine
+            I = I + 1
         Next FailedExpectation
     End If
 End Function

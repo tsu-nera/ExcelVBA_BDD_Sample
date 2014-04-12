@@ -59,6 +59,11 @@ task :hide => :open do
   @book.Visible = false
 end
 
+desc "Count Steps in Project"
+task :step => [:hide, :vbe, :import] do
+  @book.run("ShowTotalCodeLinesInProject")
+end
+
 # refered from 
 # http://osdir.com/ml/lang.ruby.japanese/2005-11/msg00180.html
 def getAbsolutePath filename

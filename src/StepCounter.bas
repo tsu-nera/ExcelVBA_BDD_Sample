@@ -16,11 +16,22 @@ Public Sub ShowTotalCodeLinesInProject()
   Dim vbcLine As Integer
   Dim TotalCount As Long: TotalCount = 0
   
+  Dim str As String: str = ""
+  
+  str = str + SPrintF("-----------------------\n")
+  str = str + SPrintF(" FileName      Execute \n")
+  str = str + SPrintF("-----------------------\n")
   For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
     vbcLine = TotalCodeLinesInVBComponent(vbcComp)
     TotalCount = TotalCount + vbcLine
+  str = str + SPrintF(" %-17s%4d \n", vbcComp.name, vbcLine)
   Next vbcComp
+  
+  str = str + SPrintF("-----------------------\n")
+  str = str + SPrintF(" Sum             %4d \n", TotalCount)
+  str = str + SPrintF("-----------------------\n")
 
+  Debug.Print str
 End Sub
 
 '---------------------------------------------------------------------------------
@@ -50,20 +61,3 @@ Private Function TotalCodeLinesInVBComponent(VBComp As VBIDE.VBComponent) As Lon
   End With
   TotalCodeLinesInVBComponent = LineCount
 End Function
-
-Public Sub generatePrint(filename As String, LineCount As Integer)
-  'Debug.Print filename & "   " & LineCount
-End Sub
-
-Public Sub ExportTotalCodeLinesInProject()
-End Sub
-
-Public Sub ExportTotalCodeLinesInProjectToCSV()
-  Dim vbcComp As VBIDE.VBComponent
-  Dim vbcLine As Integer
-
-  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
-    vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-    Debug.Print vbcLine
-  Next vbcComp
-End Sub
