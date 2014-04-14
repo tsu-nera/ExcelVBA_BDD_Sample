@@ -141,6 +141,14 @@ Private Sub InsertLines(myFile As String)
 End Sub
 
 Public Function isExcelOnject(fileName As String) As Boolean
+  Dim myFSO As New FileSystemObject
+  Dim baseName As String: baseName = myFSO.GetBaseName(fileName)
+
+  If isSpecFile(baseName) Then
+    isExcelOnject = False
+    Exit Function
+  End If
+
   Select Case Left(fileName, 5)
     Case "Sheet"
       isExcelOnject = True
