@@ -25,7 +25,6 @@ Private Sub defineHelperFiles()
                        "InlineRunner", _
                        "SpecDefinition", _
                        "SpecExpectation", _
-                       "SpecRunner", _
                        "SpecSuite", _
                        "StepCounter", _
                        "mdlPrintF")
@@ -259,7 +258,9 @@ Public Function isSrcFile(baseName As String) As Boolean
 End Function
 
 Private Function isSpecFile(baseName As String) As Boolean
-  If Right(baseName, 5) = SPEC_SUFFIX Then
+  If baseName = "SpecRunner" Then
+    isSpecFile = True
+  ElseIf Right(baseName, 5) = SPEC_SUFFIX Then
     isSpecFile = True
   Else
     isSpecFile = False
