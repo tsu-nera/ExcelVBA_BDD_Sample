@@ -146,6 +146,7 @@ Public Function isExcelOnject(fileName As String) As Boolean
 
   If isSpecFile(baseName) Then
     isExcelOnject = False
+    Set myFSO = Nothing
     Exit Function
   End If
 
@@ -157,6 +158,8 @@ Public Function isExcelOnject(fileName As String) As Boolean
     Case Else
       isExcelOnject = False
   End Select
+
+  Set myFSO = Nothing
 End Function
 
 Public Function isValidImportFile(fileName As String) As Boolean
