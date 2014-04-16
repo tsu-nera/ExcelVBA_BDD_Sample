@@ -8,6 +8,9 @@ Attribute VB_Name = "StepCounter"
 '-----------------------------------------------------------------------------------
 Option Explicit
 
+Const COUNT_TXT_FILENAME As String = "count.txt"
+Const COUNT_CSV_FILENAME As String = "count.csv"
+
 '---------------------------------------------------------------------------------
 ' Name: ShowTotalCodeLinesInProject
 '----------------------------------------------------------------------------------
@@ -38,7 +41,69 @@ Public Sub ShowTotalCodeLinesInProject()
 End Sub
 
 '---------------------------------------------------------------------------------
+' Name: WriteTotalCodeLinesInProjectToTxt
+'----------------------------------------------------------------------------------
+Public Sub WriteTotalCodeLinesInProjectToTxt()
+  Dim FSO As New FileSystemObject
+  Dim outputFile As String
+  
+  outputFile = ThisWorkbook.Path & "\" & COUNT_TXT_FILENAME
+  With FSO.OpenTextFile(fileName:=outputFile, _
+                        IOMode:=ForWriting, Create:=True)
+
+    .WriteLine ("-----------------------")
+    .WriteLine (" FileName      Execute ")
+    .WriteLine ("-----------------------")
+
+    Dim vbcComp As VBIDE.VBComponent
+    Dim vbcLine As Integer
+    Dim TotalCount As Long: TotalCount = 0
+      
+     For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
+       If FileManager.isSrcFile(vbcComp.name) Then
+	 vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+	 TotalCount = TotalCount + vbcLine
+	 .WriteLine(SPrintF(" %-17s%4d ", vbcComp.name, vbcLine))
+       End If
+     Next vbcComp
+ 
+     .WriteLine ("-----------------------")
+     .WriteLine(SPrintF(" Sum              %4d ", TotalCount))
+     .WriteLine ("-----------------------")
+    .Close
+  End With
+End Sub
+
+'---------------------------------------------------------------------------------
 ' Name: TotalCodeLinesInProject
+'----------------------------------------------------------------------------------
+Private Sub TotalCodeLinesInProject(mode As Integer)
+
+'
+'  str = str + SPrintF("-----------------------\n")
+'  str = str + SPrintF(" FileName      Execute \n")
+'  str = str + SPrintF("-----------------------\n")
+'
+'  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
+'    If FileManager.isSrcFile(vbcComp.name) Then
+'      vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+'      TotalCount = TotalCount + vbcLine
+'      str = str + SPrintF(" %-17s%4d \n", vbcComp.name, vbcLine)
+'    End If
+'  Next vbcComp
+'
+'  str = str + SPrintF("-----------------------\n")
+'  str = str + SPrintF(" Sum              %4d \n", TotalCount)
+'  str = str + SPrintF("-----------------------\n")
+'
+'  Debug.Print str
+End Sub
+
+' Private Sub TotalCodeLineInProject(mode As Integer)
+' End Sub
+
+'---------------------------------------------------------------------------------
+' Name: TotalCodeLinesInCOmmponent
 '----------------------------------------------------------------------------------
 Private Function TotalCodeLinesInVBComponent(VBComp As VBIDE.VBComponent) As Long
   Dim N As Long

@@ -59,9 +59,19 @@ task :hide => :open do
   @book.Visible = false
 end
 
-desc "Count Steps in Project"
-task :step => [:hide, :vbe, :import] do
+desc "Count Steps in Project to immidiatewindow"
+task :count => [:hide, :vbe, :import] do
   @book.run("ShowTotalCodeLinesInProject")
+end
+
+desc "Count Steps in Project to count.txt"
+task :text => :open do
+  @book.run("WriteTotalCodeLinesInProjectToTxt")
+end
+
+desc "Count Steps in Project to count.csv"
+task :csv => :open do
+  @book.run("WriteTotalCodeLinesInProjectToCsv")
 end
 
 # refered from 
