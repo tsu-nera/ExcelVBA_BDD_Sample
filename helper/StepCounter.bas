@@ -75,32 +75,32 @@ Public Sub WriteTotalCodeLinesInProjectToTxt()
 End Sub
 
 '---------------------------------------------------------------------------------
-' Name: TotalCodeLinesInProject
+' Name: WriteTotalCodeLinesInProjectToCsv
 '----------------------------------------------------------------------------------
-Private Sub TotalCodeLinesInProject(mode As Integer)
+Public Sub WriteTotalCodeLinesInProjectToCsv()
+  Dim FSO As New FileSystemObject
+  Dim outputFile As String
+  
+  outputFile = ThisWorkbook.Path & "\" & COUNT_CSV_FILENAME
+  With FSO.OpenTextFile(fileName:=outputFile, _
+                        IOMode:=ForWriting, Create:=True)
 
-'
-'  str = str + SPrintF("-----------------------\n")
-'  str = str + SPrintF(" FileName      Execute \n")
-'  str = str + SPrintF("-----------------------\n")
-'
-'  For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
-'    If FileManager.isSrcFile(vbcComp.name) Then
-'      vbcLine = TotalCodeLinesInVBComponent(vbcComp)
-'      TotalCount = TotalCount + vbcLine
-'      str = str + SPrintF(" %-17s%4d \n", vbcComp.name, vbcLine)
-'    End If
-'  Next vbcComp
-'
-'  str = str + SPrintF("-----------------------\n")
-'  str = str + SPrintF(" Sum              %4d \n", TotalCount)
-'  str = str + SPrintF("-----------------------\n")
-'
-'  Debug.Print str
+    Dim vbcComp As VBIDE.VBComponent
+    Dim vbcLine As Integer
+    Dim writeData As String: writeData = ""
+      
+     For Each vbcComp In Application.VBE.ActiveVBProject.VBComponents
+       If FileManager.isSrcFile(vbcComp.name) Then
+	 vbcLine = TotalCodeLinesInVBComponent(vbcComp)
+
+	 writeData = vbcComp.Name & "," & vbcLine
+	 .WriteLine(writeData)
+       End If
+     Next vbcComp
+ 
+    .Close
+  End With
 End Sub
-
-' Private Sub TotalCodeLineInProject(mode As Integer)
-' End Sub
 
 '---------------------------------------------------------------------------------
 ' Name: TotalCodeLinesInCOmmponent
