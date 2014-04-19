@@ -22,7 +22,7 @@ task :save => :open do
 end
 
 desc "import All Modules"
-task :import => :open do
+task :import => :open  do
   @book.run("importAllModules")
   @book.run("importFileManager")
 end

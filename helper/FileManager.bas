@@ -59,7 +59,10 @@ Private Sub clearAllModules()
       End If
     End If
     
-  Next component
+  Next Component
+
+  ' To Avoid Memory Error
+  ThisWorkbook.Save
 End Sub
 
 Private Sub importSrcMolues()
